@@ -385,5 +385,31 @@ class LoanById(Resource):
         db.session.delete(loan)
         db.session.commit()
         return {}, 204
+    
+# -------------------------
+# UserAccount (many-to-many link)
+# -------------------------
+
+class UserAccounts(Resource):
+    def get(self):
+        links = UserAccount.query.all()
+        return [ua.to_dict() for ua in links], 200
+
+    def post(self):
+        data = request.get_json() or {}
+        try:
+            link = UserAccount(
+                user_id=data['user_id'],
+                account_id=data['account_id'],
+                role=data['role'],
+            )
+            db.session.add(link)
+            db.session.commit()
+            return link.to_dict(), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+
 
 
