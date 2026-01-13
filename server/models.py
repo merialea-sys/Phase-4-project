@@ -319,5 +319,71 @@ class BranchById(Resource):
         db.session.delete(branch)
         db.session.commit()
         return {}, 204
+    
+# -------------------------
+# Loan resources
+# -------------------------
+
+class Loans(Resource):
+    def get(self):
+        loans = Loan.query.all()
+        return [l.to_dict() for l in loans], 200
+
+    def post(self):
+        data = request.get_json() or {}
+        try:
+            loan = Loan(
+                loan_type=data['loan_type'],
+                loan_amount=data['loan_amount'],
+                start_date=data.get('start_date'),
+                end_date=data.get('end_date'),
+                status=data.get('status', 'pending'),
+                branch_id=data['branch_id'],
+                user_id=data['user_id'],
+            )
+            db.session.add(loan)
+            db.session.commit()
+            return loan.to_dict(), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+
+class LoanById(Resource):
+    def get(self, id):
+        loan = Loan.query.get(id)
+        if not loan:
+            return {"error": "Loan not found"}, 404
+        return loan.to_dict(), 200
+
+    def patch(self, id):
+        loan = Loan.query.get(id)
+        if not loan:
+            return {"error": "Loan not found"}, 404
+
+        data = request.get_json() or {}
+        try:
+            for attr in [
+                'loan_type', 'loan_amount',
+                'start_date', 'end_date',
+                'status', 'branch_id', 'user_id'
+            ]:
+                if attr in data:
+                    setattr(loan, attr, data[attr])
+
+            db.session.commit()
+            return loan.to_dict(), 200
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+    def delete(self, id):
+        loan = Loan.query.get(id)
+        if not loan:
+            return {"error": "Loan not found"}, 404
+
+        db.session.delete(loan)
+        db.session.commit()
+        return {}, 204
 
 
