@@ -21,5 +21,46 @@ class UserAccount(db.Model, SerializerMixin):
 
     # Avoid deep recursion
     serialize_rules = ('-user.user_accounts', '-account.user_accounts',)
+    
+class User(db.Model, SerializerMixin):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False, unique=True)
+    _password_hash = db.Column(db.String, nullable=False)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
+    date_of_birth = db.Column(db.DateTime)
+
+    # Relationships
+    user_accounts = db.relationship(
+        'UserAccount',
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
+    loans = db.relationship(
+        'Loan',
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
+
+    serialize_rules = (
+        '-_password_hash',
+        '-user_accounts.user',
+        '-loans.user',
+    )
+
+    # Password helpers
+    @property
+    def password_hash(self):
+        return self._password_hash
+
+    @password_hash.setter
+    def password_hash(self, plain_password):
+        self._password_hash = generate_password_hash(plain_password)
+
+    def authenticate(self, plain_password):
+        return check_password_hash(self._password_hash, plain_password)
 
 
