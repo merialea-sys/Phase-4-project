@@ -1,33 +1,25 @@
-# server/app.py
+# server/models.py
 
-from flask import request, session
-from flask_restful import Resource
+from datetime import datetime
 
-from config import app, db, api
-from models import User, Account, Transaction, Branch, Loan, UserAccount
+from sqlalchemy_serializer import SerializerMixin
 
-
-# OPTIONAL: session secret (you can also set this in config.py)
-app.secret_key = "change-me-in-production"
+from config import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-# -------------------------
-# Error handlers
-# -------------------------
+class UserAccount(db.Model, SerializerMixin):
+    __tablename__ = 'user_accounts'
 
-@app.errorhandler(404)
-def handle_404(e):
-    return {"error": "Resource not found"}, 404
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), primary_key=True)
+    role = db.Column(db.String, nullable=False)
 
+    # Relationships
+    user = db.relationship('User', back_populates='user_accounts')
+    account = db.relationship('Account', back_populates='user_accounts')
 
-@app.errorhandler(400)
-def handle_400(e):
-    return {"error": "Bad request"}, 400
-
-
-@app.errorhandler(500)
-def handle_500(e):
-    return {"error": "Internal server error"}, 500
-
+    # Avoid deep recursion
+    serialize_rules = ('-user.user_accounts', '-account.user_accounts',)
 
 
