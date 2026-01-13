@@ -410,6 +410,40 @@ class UserAccounts(Resource):
             db.session.rollback()
             return {"error": str(e)}, 400
 
+# -------------------------
+# Route registration
+# -------------------------
+
+api.add_resource(Signup, '/signup')
+api.add_resource(Login, '/login')
+api.add_resource(CheckSession, '/check_session')
+api.add_resource(Logout, '/logout')
+
+api.add_resource(Users, '/users')
+api.add_resource(UserById, '/users/<int:id>')
+
+api.add_resource(Accounts, '/accounts')
+api.add_resource(AccountById, '/accounts/<int:id>')
+
+api.add_resource(Transactions, '/transactions')
+api.add_resource(TransactionById, '/transactions/<int:id>')
+
+api.add_resource(Branches, '/branches')
+api.add_resource(BranchById, '/branches/<int:id>')
+
+api.add_resource(Loans, '/loans')
+api.add_resource(LoanById, '/loans/<int:id>')
+
+api.add_resource(UserAccounts, '/user_accounts')
+
+
+# -------------------------
+# Entry point
+# -------------------------
+
+if __name__ == '__main__':
+    app.run(port=5555, debug=True)
+
 
 
 
