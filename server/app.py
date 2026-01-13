@@ -1,3 +1,4 @@
+# server/app.py
 
 from flask import request, session
 from flask_restful import Resource
@@ -156,69 +157,6 @@ class UserById(Resource):
         db.session.commit()
         return {}, 204
 
-# -------------------------
-# User resources
-# -------------------------
-
-class Users(Resource):
-    def get(self):
-        users = User.query.all()
-        return [u.to_dict() for u in users], 200
-
-    def post(self):
-        data = request.get_json() or {}
-        try:
-            user = User(
-                username=data['username'],
-                email=data['email'],
-                first_name=data.get('first_name'),
-                last_name=data.get('last_name'),
-            )
-            user.password_hash = data['password']
-            db.session.add(user)
-            db.session.commit()
-            return user.to_dict(), 201
-        except Exception as e:
-            db.session.rollback()
-            return {"error": str(e)}, 400
-
-
-class UserById(Resource):
-    def get(self, id):
-        user = User.query.get(id)
-        if not user:
-            return {"error": "User not found"}, 404
-        return user.to_dict(), 200
-
-    def patch(self, id):
-        user = User.query.get(id)
-        if not user:
-            return {"error": "User not found"}, 404
-
-        data = request.get_json() or {}
-        try:
-            for attr in ['username', 'email', 'first_name', 'last_name']:
-                if attr in data:
-                    setattr(user, attr, data[attr])
-
-            if 'password' in data:
-                user.password_hash = data['password']
-
-            db.session.commit()
-            return user.to_dict(), 200
-        except Exception as e:
-            db.session.rollback()
-            return {"error": str(e)}, 400
-
-    def delete(self, id):
-        user = User.query.get(id)
-        if not user:
-            return {"error": "User not found"}, 404
-
-        db.session.delete(user)
-        db.session.commit()
-        return {}, 204
-    
 # -------------------------
 # Account resources
 # -------------------------

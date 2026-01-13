@@ -84,5 +84,63 @@ class Branch(db.Model, SerializerMixin):
     )
 
     serialize_rules = ('-accounts.branch', '-loans.branch',)
+    
+class Account(db.Model, SerializerMixin):
+    __tablename__ = 'accounts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    account_number = db.Column(db.Integer, unique=True, nullable=False)
+    account_type = db.Column(db.String, nullable=False)
+    current_balance = db.Column(db.Integer, default=0)
+    status = db.Column(db.String, default='active')
+    user_id = db.Column(db.Integer)  # optional direct link if you want
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
+
+    transactions = db.relationship(
+        'Transaction',
+        back_populates='account',
+        cascade='all, delete-orphan'
+    )
+    user_accounts = db.relationship(
+        'UserAccount',
+        back_populates='account',
+        cascade='all, delete-orphan'
+    )
+    branch = db.relationship('Branch', back_populates='accounts')
+
+    serialize_rules = (
+        '-transactions.account',
+        '-user_accounts.account',
+        '-branch.accounts',
+    )
+    
+class Account(db.Model, SerializerMixin):
+    __tablename__ = 'accounts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    account_number = db.Column(db.Integer, unique=True, nullable=False)
+    account_type = db.Column(db.String, nullable=False)
+    current_balance = db.Column(db.Integer, default=0)
+    status = db.Column(db.String, default='active')
+    user_id = db.Column(db.Integer)  # optional direct link if you want
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
+
+    transactions = db.relationship(
+        'Transaction',
+        back_populates='account',
+        cascade='all, delete-orphan'
+    )
+    user_accounts = db.relationship(
+        'UserAccount',
+        back_populates='account',
+        cascade='all, delete-orphan'
+    )
+    branch = db.relationship('Branch', back_populates='accounts')
+
+    serialize_rules = (
+        '-transactions.account',
+        '-user_accounts.account',
+        '-branch.accounts',
+    )
 
 
