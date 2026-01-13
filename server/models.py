@@ -74,3 +74,21 @@ class Login(Resource):
 
         session['user_id'] = user.id
         return user.to_dict(), 200
+    
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return {"error": "Not logged in"}, 401
+
+        user = User.query.get(user_id)
+        if not user:
+            return {"error": "User not found"}, 404
+
+        return user.to_dict(), 200
+
+
+class Logout(Resource):
+    def delete(self):
+        session['user_id'] = None
+        return {}, 204
