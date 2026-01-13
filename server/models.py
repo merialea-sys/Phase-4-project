@@ -62,5 +62,27 @@ class User(db.Model, SerializerMixin):
 
     def authenticate(self, plain_password):
         return check_password_hash(self._password_hash, plain_password)
+    
+class Branch(db.Model, SerializerMixin):
+    __tablename__ = 'branches'
+
+    id = db.Column(db.Integer, primary_key=True)
+    branch_name = db.Column(db.String, nullable=False)
+    branch_code = db.Column(db.String, nullable=False, unique=True)
+    address = db.Column(db.String)
+    phone_number = db.Column(db.Integer)
+
+    accounts = db.relationship(
+        'Account',
+        back_populates='branch',
+        cascade='all, delete-orphan'
+    )
+    loans = db.relationship(
+        'Loan',
+        back_populates='branch',
+        cascade='all, delete-orphan'
+    )
+
+    serialize_rules = ('-accounts.branch', '-loans.branch',)
 
 
