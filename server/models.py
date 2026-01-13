@@ -155,3 +155,169 @@ class UserById(Resource):
         db.session.delete(user)
         db.session.commit()
         return {}, 204
+
+# -------------------------
+# User resources
+# -------------------------
+
+class Users(Resource):
+    def get(self):
+        users = User.query.all()
+        return [u.to_dict() for u in users], 200
+
+    def post(self):
+        data = request.get_json() or {}
+        try:
+            user = User(
+                username=data['username'],
+                email=data['email'],
+                first_name=data.get('first_name'),
+                last_name=data.get('last_name'),
+            )
+            user.password_hash = data['password']
+            db.session.add(user)
+            db.session.commit()
+            return user.to_dict(), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+
+class UserById(Resource):
+    def get(self, id):
+        user = User.query.get(id)
+        if not user:
+            return {"error": "User not found"}, 404
+        return user.to_dict(), 200
+
+    def patch(self, id):
+        user = User.query.get(id)
+        if not user:
+            return {"error": "User not found"}, 404
+
+        data = request.get_json() or {}
+        try:
+            for attr in ['username', 'email', 'first_name', 'last_name']:
+                if attr in data:
+                    setattr(user, attr, data[attr])
+
+            if 'password' in data:
+                user.password_hash = data['password']
+
+            db.session.commit()
+            return user.to_dict(), 200
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+    def delete(self, id):
+        user = User.query.get(id)
+        if not user:
+            return {"error": "User not found"}, 404
+
+        db.session.delete(user)
+        db.session.commit()
+        return {}, 204
+
+# -------------------------
+# Transaction resources
+# -------------------------
+
+class Transactions(Resource):
+    def get(self):
+        txs = Transaction.query.all()
+        return [t.to_dict() for t in txs], 200
+
+    def post(self):
+        data = request.get_json() or {}
+        try:
+            tx = Transaction(
+                amount=data['amount'],
+                transaction_type=data['transaction_type'],
+                transaction_date=data.get('transaction_date'),
+                account_id=data['account_id'],
+            )
+            db.session.add(tx)
+            db.session.commit()
+            return tx.to_dict(), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+
+class TransactionById(Resource):
+    def get(self, id):
+        tx = Transaction.query.get(id)
+        if not tx:
+            return {"error": "Transaction not found"}, 404
+        return tx.to_dict(), 200
+
+    def delete(self, id):
+        tx = Transaction.query.get(id)
+        if not tx:
+            return {"error": "Transaction not found"}, 404
+
+        db.session.delete(tx)
+        db.session.commit()
+        return {}, 204
+    
+# -------------------------
+# Branch resources
+# -------------------------
+
+class Branches(Resource):
+    def get(self):
+        branches = Branch.query.all()
+        return [b.to_dict() for b in branches], 200
+
+    def post(self):
+        data = request.get_json() or {}
+        try:
+            branch = Branch(
+                branch_name=data['branch_name'],
+                branch_code=data['branch_code'],
+                address=data.get('address'),
+                phone_number=data.get('phone_number'),
+            )
+            db.session.add(branch)
+            db.session.commit()
+            return branch.to_dict(), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+
+class BranchById(Resource):
+    def get(self, id):
+        branch = Branch.query.get(id)
+        if not branch:
+            return {"error": "Branch not found"}, 404
+        return branch.to_dict(), 200
+
+    def patch(self, id):
+        branch = Branch.query.get(id)
+        if not branch:
+            return {"error": "Branch not found"}, 404
+
+        data = request.get_json() or {}
+        try:
+            for attr in ['branch_name', 'branch_code', 'address', 'phone_number']:
+                if attr in data:
+                    setattr(branch, attr, data[attr])
+
+            db.session.commit()
+            return branch.to_dict(), 200
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 400
+
+    def delete(self, id):
+        branch = Branch.query.get(id)
+        if not branch:
+            return {"error": "Branch not found"}, 404
+
+        db.session.delete(branch)
+        db.session.commit()
+        return {}, 204
+
+
