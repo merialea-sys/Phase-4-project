@@ -114,33 +114,34 @@ class Account(db.Model, SerializerMixin):
         '-branch.accounts',
     )
     
-class Account(db.Model, SerializerMixin):
-    __tablename__ = 'accounts'
+class Transaction(db.Model, SerializerMixin):
+    __tablename__ = 'transactions'
 
     id = db.Column(db.Integer, primary_key=True)
-    account_number = db.Column(db.Integer, unique=True, nullable=False)
-    account_type = db.Column(db.String, nullable=False)
-    current_balance = db.Column(db.Integer, default=0)
-    status = db.Column(db.String, default='active')
-    user_id = db.Column(db.Integer)  # optional direct link if you want
+    amount = db.Column(db.Integer, nullable=False)
+    transaction_type = db.Column(db.String, nullable=False)
+    transaction_date = db.Column(db.DateTime, default=datetime.utcnow)
+    account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
+
+    account = db.relationship('Account', back_populates='transactions')
+
+    serialize_rules = ('-account.transactions',)
+
+
+class Loan(db.Model, SerializerMixin):
+    __tablename__ = 'loans'
+
+    id = db.Column(db.Integer, primary_key=True)
+    loan_type = db.Column(db.String, nullable=False)
+    loan_amount = db.Column(db.Integer, nullable=False)
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+    status = db.Column(db.String, default='pending')
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    transactions = db.relationship(
-        'Transaction',
-        back_populates='account',
-        cascade='all, delete-orphan'
-    )
-    user_accounts = db.relationship(
-        'UserAccount',
-        back_populates='account',
-        cascade='all, delete-orphan'
-    )
-    branch = db.relationship('Branch', back_populates='accounts')
+    branch = db.relationship('Branch', back_populates='loans')
+    user = db.relationship('User', back_populates='loans')
 
-    serialize_rules = (
-        '-transactions.account',
-        '-user_accounts.account',
-        '-branch.accounts',
-    )
-
+    serialize_rules = ('-branch.loans', '-user.loans',)
 
