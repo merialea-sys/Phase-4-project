@@ -1,14 +1,18 @@
 # server/app.py
 
+<<<<<<< HEAD
 from auth import login_required, admin_required, owner_required
 from flask import request, session
+=======
+from flask import  request, session
+>>>>>>> main
 from flask_restful import Resource
 
 from config import app, db, api
 from models import User, Account, Transaction, Branch, Loan, UserAccount
 
 
-# OPTIONAL: session secret (you can also set this in config.py)
+# OPTIONAL
 app.secret_key = "change-me-in-production"
 
 def require_role(user_id, account_id, allowed_roles):
