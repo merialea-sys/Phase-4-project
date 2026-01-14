@@ -195,10 +195,14 @@ class Accounts(Resource):
 
 class AccountById(Resource):
     def get(self, id):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         account = Account.query.get(id)
         if not account:
             return {"error": "Account not found"}, 404
         return account.to_dict(), 200
+
 
     def patch(self, id):
         account = Account.query.get(id)
