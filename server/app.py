@@ -326,7 +326,7 @@ class TransactionById(Resource):
             return {"error": "Forbidden"}, 403
 
         return tx.to_dict(), 200
-
+    @owner_required
     def delete(self, id):
         tx = Transaction.query.get(id)
         if not tx:
