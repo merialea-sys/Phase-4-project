@@ -1,11 +1,9 @@
 # server/app.py
 
-<<<<<<< HEAD
+
 from auth import login_required, admin_required, owner_required
 from flask import request, session
-=======
-from flask import  request, session
->>>>>>> main
+
 from flask_restful import Resource
 
 from config import app, db, api
