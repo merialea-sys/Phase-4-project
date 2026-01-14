@@ -533,6 +533,9 @@ api.add_resource(LoanById, '/loans/<int:id>')
 
 api.add_resource(UserAccounts, '/user_accounts')
 
+api.add_resource(ApproveLoan, "/loans/<int:id>/approve")
+
+
 
 # -------------------------
 # Entry point
