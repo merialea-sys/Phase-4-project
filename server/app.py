@@ -448,7 +448,7 @@ class LoanById(Resource):
             return loan.to_dict(), 200
 
         return {"error": "Forbidden"}, 403
-
+    @owner_required
     def patch(self, id):
         loan = Loan.query.get(id)
         if not loan:
@@ -469,7 +469,8 @@ class LoanById(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": str(e)}, 400
-
+    
+    @admin_required
     def delete(self, id):
         loan = Loan.query.get(id)
         if not loan:
