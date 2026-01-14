@@ -243,6 +243,13 @@ class AccountById(Resource):
             return {"error": str(e)}, 400
 
     def delete(self, id):
+        user_id = session.get("user_id")
+        if not user_id:
+            return {"error": "Unauthorized"}, 401
+
+        if not require_role(user_id, id, ["admin"]):
+            return {"error": "Forbidden"}, 403
+
         account = Account.query.get(id)
         if not account:
             return {"error": "Account not found"}, 404
