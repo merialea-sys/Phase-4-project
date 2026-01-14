@@ -144,5 +144,5 @@ class Loan(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='loans')
 
     serialize_rules = ('-branch.loans', '-user.loans',)
->>>>>>> George
+
 
