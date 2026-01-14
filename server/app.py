@@ -240,8 +240,12 @@ class AccountById(Resource):
 
 class Transactions(Resource):
     def get(self):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         txs = Transaction.query.all()
         return [t.to_dict() for t in txs], 200
+
 
     def post(self):
         data = request.get_json() or {}
