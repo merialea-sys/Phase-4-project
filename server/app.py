@@ -415,8 +415,12 @@ class LoanById(Resource):
 
 class UserAccounts(Resource):
     def get(self):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         links = UserAccount.query.all()
         return [ua.to_dict() for ua in links], 200
+
 
     def post(self):
         data = request.get_json() or {}
