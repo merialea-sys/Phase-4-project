@@ -1,5 +1,6 @@
 # server/app.py
 
+from functools import wraps
 from flask import request, session
 from flask_restful import Resource
 
@@ -9,6 +10,30 @@ from models import User, Account, Transaction, Branch, Loan, UserAccount
 
 # OPTIONAL: session secret (you can also set this in config.py)
 app.secret_key = "change-me-in-production"
+
+def login_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+        return fn(*args, **kwargs)
+    return wrapper
+
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        user_id = session.get("user_id")
+        if not user_id:
+            return {"error": "Unauthorized"}, 401
+
+        user = User.query.get(user_id)
+        if not user or not user.is_admin:
+            return {"error": "Forbidden — Admins only"}, 403
+
+        return fn(*args, **kwargs)
+    return wrapper
+
 
 def require_role(user_id, account_id, allowed_roles):
     link = UserAccount.query.filter_by(
