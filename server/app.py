@@ -481,11 +481,19 @@ class Loans(Resource):
 
 
 class LoanById(Resource):
+    @login_required
     def get(self, id):
         loan = Loan.query.get(id)
         if not loan:
             return {"error": "Loan not found"}, 404
-        return loan.to_dict(), 200
+
+        user_id = session.get("user_id")
+        user = User.query.get(user_id)
+
+        if user.is_admin or loan.user_id == user_id:
+            return loan.to_dict(), 200
+
+        return {"error": "Forbidden"}, 403
 
     def patch(self, id):
         loan = Loan.query.get(id)
