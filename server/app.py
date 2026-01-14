@@ -253,6 +253,8 @@ class Accounts(Resource):
 
 
 class AccountById(Resource):
+    
+    @login_required
     def get(self, id):
         user_id = session.get("user_id")
         if not user_id:
@@ -269,7 +271,7 @@ class AccountById(Resource):
         return account.to_dict(), 200
 
 
-
+    @owner_required
     def patch(self, id):
         account = Account.query.get(id)
         if not account:
@@ -279,7 +281,7 @@ class AccountById(Resource):
         try:
             for attr in [
                 'account_number', 'account_type',
-                'current_balance', 'status', 'user_id', 'branch_id'
+                'current_balance', 'status'
             ]:
                 if attr in data:
                     setattr(account, attr, data[attr])
@@ -289,7 +291,7 @@ class AccountById(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": str(e)}, 400
-
+    @admin_required
     def delete(self, id):
         user_id = session.get("user_id")
         if not user_id:
@@ -312,36 +314,63 @@ class AccountById(Resource):
 # -------------------------
 
 class Transactions(Resource):
+    @login_required
     def get(self):
-        if not session.get("user_id"):
-            return {"error": "Unauthorized"}, 401
+        user_id = session.get("user_id")
 
-        txs = Transaction.query.all()
+        # Get all accounts owned by this user
+        owned_accounts = [
+            link.account_id
+            for link in UserAccount.query.filter_by(user_id=user_id).all()
+        ]
+
+        # Filter transactions by owned accounts
+        txs = Transaction.query.filter(
+            Transaction.account_id.in_(owned_accounts)
+        ).all()
+
         return [t.to_dict() for t in txs], 200
 
 
+    @owner_required
     def post(self):
         data = request.get_json() or {}
-        try:
-            tx = Transaction(
-                amount=data['amount'],
-                transaction_type=data['transaction_type'],
-                transaction_date=data.get('transaction_date'),
-                account_id=data['account_id'],
-            )
-            db.session.add(tx)
-            db.session.commit()
-            return tx.to_dict(), 201
-        except Exception as e:
-            db.session.rollback()
-            return {"error": str(e)}, 400
+
+        tx = Transaction(
+            amount=data['amount'],
+            transaction_type=data['transaction_type'],
+            transaction_date=data.get('transaction_date'),
+            account_id=data['account_id'],
+        )
+        db.session.add(tx)
+        db.session.commit()
+        return tx.to_dict(), 201
+
 
 
 class TransactionById(Resource):
+    @login_required
     def get(self, id):
         tx = Transaction.query.get(id)
         if not tx:
             return {"error": "Transaction not found"}, 404
+
+        user_id = session.get("user_id")
+
+        # Admins can view all
+        user = User.query.get(user_id)
+        if user.is_admin:
+            return tx.to_dict(), 200
+
+        # Owners only
+        link = UserAccount.query.filter_by(
+            user_id=user_id,
+            account_id=tx.account_id
+        ).first()
+
+        if not link:
+            return {"error": "Forbidden"}, 403
+
         return tx.to_dict(), 200
 
     def delete(self, id):
