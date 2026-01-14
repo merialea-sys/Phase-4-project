@@ -1,6 +1,6 @@
 # server/app.py
 
-from functools import wraps
+from auth import login_required, admin_required, owner_required
 from flask import request, session
 from flask_restful import Resource
 
