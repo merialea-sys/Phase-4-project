@@ -206,13 +206,20 @@ class Accounts(Resource):
 
 class AccountById(Resource):
     def get(self, id):
-        if not session.get("user_id"):
+        user_id = session.get("user_id")
+        if not user_id:
             return {"error": "Unauthorized"}, 401
 
         account = Account.query.get(id)
         if not account:
             return {"error": "Account not found"}, 404
+
+        # Role-based access
+        if not require_role(user_id, id, ["owner", "admin"]):
+            return {"error": "Forbidden"}, 403
+
         return account.to_dict(), 200
+
 
 
     def patch(self, id):
