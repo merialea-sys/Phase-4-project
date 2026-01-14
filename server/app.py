@@ -345,8 +345,12 @@ class BranchById(Resource):
 
 class Loans(Resource):
     def get(self):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         loans = Loan.query.all()
         return [l.to_dict() for l in loans], 200
+
 
     def post(self):
         data = request.get_json() or {}
