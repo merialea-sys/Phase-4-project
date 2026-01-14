@@ -167,8 +167,12 @@ class UserById(Resource):
 
 class Accounts(Resource):
     def get(self):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         accounts = Account.query.all()
         return [a.to_dict() for a in accounts], 200
+
 
     def post(self):
         data = request.get_json() or {}
