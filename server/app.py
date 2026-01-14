@@ -1,13 +1,13 @@
 # server/app.py
 
-from flask import request, session
+from flask import  request, session
 from flask_restful import Resource
 
 from config import app, db, api
 from models import User, Account, Transaction, Branch, Loan, UserAccount
 
 
-# OPTIONAL: session secret (you can also set this in config.py)
+# OPTIONAL
 app.secret_key = "change-me-in-production"
 
 
