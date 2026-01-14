@@ -202,6 +202,7 @@ class UserById(Resource):
 # -------------------------
 
 class Accounts(Resource):
+    @login_required
     def get(self):
         if not session.get("user_id"):
             return {"error": "Unauthorized"}, 401
@@ -209,7 +210,7 @@ class Accounts(Resource):
         accounts = Account.query.all()
         return [a.to_dict() for a in accounts], 200
 
-
+    @admin_required
     def post(self):
         data = request.get_json() or {}
         try:
@@ -486,6 +487,25 @@ class UserAccounts(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": str(e)}, 400
+        
+class ApproveLoan(Resource):
+    @admin_required
+    def patch(self, id):
+        loan = Loan.query.get(id)
+        if not loan:
+            return {"error": "Loan not found"}, 404
+
+        data = request.get_json()
+        new_status = data.get("status")
+
+        if new_status not in ["approved", "rejected"]:
+            return {"error": "Invalid status"}, 400
+
+        loan.status = new_status
+        db.session.commit()
+
+        return loan.to_dict(), 200
+
 
 # -------------------------
 # Route registration
