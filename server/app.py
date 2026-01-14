@@ -446,12 +446,18 @@ class BranchById(Resource):
 # -------------------------
 
 class Loans(Resource):
+    @login_required
     def get(self):
-        if not session.get("user_id"):
-            return {"error": "Unauthorized"}, 401
+        user_id = session.get("user_id")
+        user = User.query.get(user_id)
 
-        loans = Loan.query.all()
+        if user.is_admin:
+            loans = Loan.query.all()
+        else:
+            loans = Loan.query.filter_by(user_id=user_id).all()
+
         return [l.to_dict() for l in loans], 200
+
 
 
     def post(self):
