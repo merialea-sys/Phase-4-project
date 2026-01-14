@@ -32,6 +32,8 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     date_of_birth = db.Column(db.DateTime)
+    is_admin = db.Column(db.Boolean, default=False)
+
 
     # Relationships
     user_accounts = db.relationship(
