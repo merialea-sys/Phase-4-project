@@ -11,6 +11,28 @@ from models import User, Account, Transaction, Branch, Loan, UserAccount
 # OPTIONAL: session secret (you can also set this in config.py)
 app.secret_key = "change-me-in-production"
 
+def owner_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        user_id = session.get("user_id")
+        if not user_id:
+            return {"error": "Unauthorized"}, 401
+
+        account_id = kwargs.get("id")  # from /accounts/<id>
+
+        # Check if this user is linked to the account
+        link = UserAccount.query.filter_by(
+            user_id=user_id,
+            account_id=account_id
+        ).first()
+
+        if not link:
+            return {"error": "Forbidden — Not your account"}, 403
+
+        return fn(*args, **kwargs)
+    return wrapper
+
+
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
