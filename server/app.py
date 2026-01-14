@@ -123,10 +123,14 @@ class Users(Resource):
 
 class UserById(Resource):
     def get(self, id):
+        if not session.get("user_id"):
+            return {"error": "Unauthorized"}, 401
+
         user = User.query.get(id)
         if not user:
             return {"error": "User not found"}, 404
         return user.to_dict(), 200
+
 
     def patch(self, id):
         user = User.query.get(id)
