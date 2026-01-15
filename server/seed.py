@@ -1,5 +1,5 @@
 from config import app, db
-from models import Branch , User, Account, UserAccount, Transaction
+from models import Branch , User, Account, UserAccount, Transaction, Loan
 from datetime import datetime
 with app.app_context():
     if Branch.query.count() == 0:
@@ -53,4 +53,10 @@ with app.app_context():
         db.session.add_all([tx1, tx2])
         db.session.commit()
         print("✅ Added transactions")
-        
+
+    if Loan.query.count() == 0:
+        loan1 = Loan(loan_type="personal", loan_amount=2000, start_date=datetime.utcnow(), end_date=datetime.utcnow(),
+                 status="pending", branch_id=Branch.query.first().id, user_id=User.query.filter_by(username="john_doe").first().id)
+        db.session.add(loan1)
+        db.session.commit()
+        print("✅ Added loans")
