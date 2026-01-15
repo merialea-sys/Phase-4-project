@@ -1,0 +1,20 @@
+/* =========================================================
+   Apex Bank Dashboard – Complete Advanced CSS
+   ========================================================= */
+
+/* =========================
+   Root Variables
+   ========================= */
+:root {
+  --primary-blue: #1f6ae1;
+  --primary-blue-dark: #174fb3;
+  --accent-blue: #3b82f6;
+  --slate-light: #f4f6fb;
+  --slate-medium: #e2e8f0;
+  --slate-dark: #0a2a66;
+  --white: #ffffff;
+  --error-red: #991b1b;
+  --success-green: #16a34a;
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
+  --spacing-unit: 8px;
