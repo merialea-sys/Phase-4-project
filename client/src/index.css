@@ -226,4 +226,46 @@ button {
 .about-section h2 {
   font-size: 1.8rem;
   color: var(--slate-dark);
-  margin}
+  margin-bottom: 1rem;
+}
+
+.about-section p {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.account-container,
+.branch-container,
+.loan-container,
+.transaction-container,
+.profile-container {
+  padding: 2rem 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+form {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(14px);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+input, select {
+  padding: 0.7rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--slate-medium);
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(31,106,225,0.2);
+}
