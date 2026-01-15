@@ -107,6 +107,34 @@ button {
 	position: relative;
 	overflow: hidden;
 	animation: float 4s ease-in-out infinite;
+	overflow: hidden;
+
+.feature-tile {
+	background: rgba(255,255,255,0.95);
+	backdrop-filter: blur(14px);
+	padding: 2rem 1rem;
+	border-radius: var(--border-radius);
+	box-shadow: var(--card-shadow);
+	text-align: center;
+	font-weight: 600;
+	transition: all 0.4s ease;
+	cursor: pointer;
+	position: relative;
+}
+
+.feature-tile::before {
+	content: "";
+	position: absolute;
+	top: -50%; left: -50%; width: 200%; height: 200%;
+	background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 70%);
+	transform: rotate(45deg);
+	z-index: 0;
+}
+
+.feature-tile:hover { transform: translateY(-8px) scale(1.05); box-shadow: var(--card-hover-shadow); }
+.feature-tile img { width: 50px; margin-bottom: 0.5rem; z-index: 1; position: relative; }
+
+.about-section { max-width: 900px; margin: 3rem auto 6rem auto; padding: 0 1rem; text-align: center; }
 
 }
 
