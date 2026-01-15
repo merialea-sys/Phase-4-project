@@ -17,3 +17,15 @@ with app.app_context():
         db.session.add(admin)
         db.session.commit()
         print("✅ Added admin user")
+
+    if User.query.filter_by(is_admin=False).count() == 0:
+        user1 = User(username="john_doe", email="john@example.com", first_name="John", last_name="Doe")
+        user1.password_hash = "password1"
+
+        user2 = User(username="jane_smith", email="jane@example.com", first_name="Jane", last_name="Smith")
+        user2.password_hash = "password2"
+
+        db.session.add_all([user1, user2])
+        db.session.commit()
+        print("✅ Added normal users")
+
