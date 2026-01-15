@@ -1,7 +1,10 @@
 from config import app, db
-from models import Branch , User, Account, UserAccount, Transaction, Loan
+from models import Branch, User, Account, UserAccount, Transaction, Loan
 from datetime import datetime
+
 with app.app_context():
+
+    # --- Branches ---
     if Branch.query.count() == 0:
         branch1 = Branch(branch_name="Central Branch", branch_code="BR001", address="123 Main St", phone_number=1234567890)
         branch2 = Branch(branch_name="North Branch", branch_code="BR002", address="456 North St", phone_number=1234567891)
@@ -9,8 +12,7 @@ with app.app_context():
         db.session.commit()
         print("✅ Added branches")
 
-
-with app.app_context():
+    # --- Admin user ---
     if User.query.filter_by(is_admin=True).count() == 0:
         admin = User(username="admin", email="admin@example.com", first_name="Admin", last_name="User", is_admin=True)
         admin.password_hash = "admin123"
@@ -18,6 +20,7 @@ with app.app_context():
         db.session.commit()
         print("✅ Added admin user")
 
+    # --- Normal users ---
     if User.query.filter_by(is_admin=False).count() == 0:
         user1 = User(username="john_doe", email="john@example.com", first_name="John", last_name="Doe")
         user1.password_hash = "password1"
@@ -29,6 +32,7 @@ with app.app_context():
         db.session.commit()
         print("✅ Added normal users")
 
+    # --- Accounts and UserAccounts ---
     if Account.query.count() == 0:
         central_branch = Branch.query.filter_by(branch_code="BR001").first()
         north_branch = Branch.query.filter_by(branch_code="BR002").first()
@@ -46,6 +50,7 @@ with app.app_context():
         db.session.commit()
         print("✅ Added accounts and linked users")
 
+    # --- Transactions ---
     if Transaction.query.count() == 0:
         tx1 = Transaction(amount=1000, transaction_type="deposit", transaction_date=datetime.utcnow(), account_id=Account.query.filter_by(account_number=1001).first().id)
         tx2 = Transaction(amount=500, transaction_type="withdrawal", transaction_date=datetime.utcnow(), account_id=Account.query.filter_by(account_number=1002).first().id)
@@ -54,9 +59,17 @@ with app.app_context():
         db.session.commit()
         print("✅ Added transactions")
 
+    # --- Loans ---
     if Loan.query.count() == 0:
-        loan1 = Loan(loan_type="personal", loan_amount=2000, start_date=datetime.utcnow(), end_date=datetime.utcnow(),
-                 status="pending", branch_id=Branch.query.first().id, user_id=User.query.filter_by(username="john_doe").first().id)
+        loan1 = Loan(
+            loan_type="personal",
+            loan_amount=2000,
+            start_date=datetime.utcnow(),
+            end_date=datetime.utcnow(),
+            status="pending",
+            branch_id=Branch.query.first().id,
+            user_id=User.query.filter_by(username="john_doe").first().id
+        )
         db.session.add(loan1)
         db.session.commit()
         print("✅ Added loans")
