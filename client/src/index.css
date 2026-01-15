@@ -259,3 +259,23 @@ button:disabled { background: #a5b4fc; cursor: not-allowed; }
 
 * {
 	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: var(--font-primary);
+	scroll-behavior: smooth;
+}
+
+body {
+	background: var(--slate-light);
+	color: var(--slate-dark);
+	line-height: 1.6;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+button {
+	font-family: var(--font-primary);
+	cursor: pointer;
