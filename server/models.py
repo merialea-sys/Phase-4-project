@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# ✅ Fixed import for db
-from server.config import db  # use absolute import to avoid relative import issues
+
+from config import db 
 
 
 class UserAccount(db.Model, SerializerMixin):
