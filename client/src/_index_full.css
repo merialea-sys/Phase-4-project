@@ -239,3 +239,43 @@ button:disabled { background: #a5b4fc; cursor: not-allowed; }
 	.hero-section { padding: 4rem 1rem; }
 }
 
+:root {
+	--primary-blue: #1f6ae1;
+	--primary-blue-dark: #174fb3;
+	--accent-blue: #3b82f6;
+	--slate-light: #f4f6fb;
+	--slate-medium: #e2e8f0;
+	--slate-dark: #0a2a66;
+	--white: #ffffff;
+	--error-red: #991b1b;
+	--success-green: #16a34a;
+	--border-radius: 12px;
+	--transition-speed: 0.3s;
+	--spacing-unit: 8px;
+	--card-shadow: 0 10px 22px rgba(0,0,0,0.08);
+	--card-hover-shadow: 0 14px 26px rgba(0,0,0,0.12);
+	--font-primary: 'Inter', sans-serif;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: var(--font-primary);
+	scroll-behavior: smooth;
+}
+
+body {
+	background: var(--slate-light);
+	color: var(--slate-dark);
+	line-height: 1.6;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+button {
+	font-family: var(--font-primary);
+	cursor: pointer;
