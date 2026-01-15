@@ -20,6 +20,7 @@ with app.app_context():
         db.session.commit()
         print("✅ Added admin user")
 
+
     # --- Normal users ---
     if User.query.filter_by(is_admin=False).count() == 0:
         user1 = User(username="john_doe", email="john@example.com", first_name="John", last_name="Doe")
