@@ -1,6 +1,5 @@
 import React from "react";
 import { NavLink, useNavigate} from "react-router-dom";
-import "./Navbar.css";
 
 function Navbar({ user, onLogout }) {
     const navigate = useNavigate();

@@ -10,10 +10,7 @@ function AccountsPage() {
 
   const fetchAccounts = () => {
     fetch ("/accounts")
-      .then((r) => {
-        if (r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
-        return r.json();
-      })
+      .then((r) => r.json())
       .then ((data) => setAccounts(data))
       .catch((error) =>{
         setError(error.message === "Unauthorized"

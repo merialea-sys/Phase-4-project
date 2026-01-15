@@ -10,10 +10,7 @@ function LoansPage() {
 
   const fetchLoans = () => {
     fetch ("/loans")
-      .then((r) => {
-        if (r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
-        return r.json();
-      })
+      .then((r) => r.json())
       .then ((data) => setLoans(data))
       .catch((error) =>{
         setError(error.message === "Unauthorized"
@@ -98,7 +95,7 @@ function LoansPage() {
 
             <div className="loan-list">
                 {loans.map((loan) => (
-                    <div key={loan.id} className="account-card">
+                    <div key={loan.id} className="loan-card">
                         <h2>{loan.loan_type}</h2>
                         <p>Loan Amount: {loan.loan_amount}</p>
                         <p>Start Date: {loan.start_date}</p>
