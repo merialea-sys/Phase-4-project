@@ -22,4 +22,21 @@
 	box-sizing: border-box;
 	font-family: var(--font-primary);
 	scroll-behavior: smooth;
-	
+}
+
+body {
+	background: var(--slate-light);
+	color: var(--slate-dark);
+	line-height: 1.6;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+button {
+	font-family: var(--font-primary);
+	cursor: pointer;
+	transition: all var(--transition-speed) ease;
+
