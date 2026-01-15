@@ -60,7 +60,7 @@ function BranchesPage() {
     return (
         <div className="branch-container">
             <header className="branch-header">
-                <h1>Accounts</h1>
+                <h1>Branches</h1>
             </header>
 
             <section className="branch-form-section">
