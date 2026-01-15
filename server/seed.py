@@ -1,6 +1,6 @@
 from config import app, db
-from models import Branch , User
-
+from models import Branch , User, Account, UserAccount, Transaction
+from datetime import datetime
 with app.app_context():
     if Branch.query.count() == 0:
         branch1 = Branch(branch_name="Central Branch", branch_code="BR001", address="123 Main St", phone_number=1234567890)
@@ -29,3 +29,28 @@ with app.app_context():
         db.session.commit()
         print("✅ Added normal users")
 
+    if Account.query.count() == 0:
+        central_branch = Branch.query.filter_by(branch_code="BR001").first()
+        north_branch = Branch.query.filter_by(branch_code="BR002").first()
+
+        john_acc = Account(account_number=1001, account_type="savings", current_balance=5000, branch_id=central_branch.id)
+        jane_acc = Account(account_number=1002, account_type="checking", current_balance=3000, branch_id=north_branch.id)
+
+        db.session.add_all([john_acc, jane_acc])
+        db.session.commit()
+
+        ua1 = UserAccount(user_id=User.query.filter_by(username="john_doe").first().id, account_id=john_acc.id, role="owner")
+        ua2 = UserAccount(user_id=User.query.filter_by(username="jane_smith").first().id, account_id=jane_acc.id, role="owner")
+
+        db.session.add_all([ua1, ua2])
+        db.session.commit()
+        print("✅ Added accounts and linked users")
+
+    if Transaction.query.count() == 0:
+        tx1 = Transaction(amount=1000, transaction_type="deposit", transaction_date=datetime.utcnow(), account_id=Account.query.filter_by(account_number=1001).first().id)
+        tx2 = Transaction(amount=500, transaction_type="withdrawal", transaction_date=datetime.utcnow(), account_id=Account.query.filter_by(account_number=1002).first().id)
+
+        db.session.add_all([tx1, tx2])
+        db.session.commit()
+        print("✅ Added transactions")
+        
