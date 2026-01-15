@@ -1,40 +1,59 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {useFormik} from "formik";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import * as Yup from "yup";
-import "./AuthPage.css";
 
 function AuthPage({ onLogin}) {
-    const [isLogin, setIsLogin] = useState(true);
+    const location = useLocation();
+    const [isLogin, setIsLogin] = useState(location.pathname === "/login");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+    setIsLogin(location.pathname === "/login");
+  }, [location.pathname]);
 
     const formik = useFormik({
         initialValues: {
             username: "",
-            email: "",
             password: "",
+            email: "",
+            first_name: "",
+            last_name: "",
         },
         validationSchema: Yup.object({
-            username: Yup.string().required("Username is required"),
-            email: Yup.string().email("Invalid email address").required("Email is required"),
+            username: Yup.string()
+            .required("Username is required"),
             password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+            email: isLogin 
+            ? Yup.string() 
+            : Yup.string().email("Invalid email address").required("Email is required"),
+            first_name: isLogin 
+            ? Yup.string() 
+            : Yup.string().required("Required"),
+            last_name: isLogin 
+            ? Yup.string() 
+            : Yup.string().required("Required"),
         }),
         onSubmit: (values) => {
+            setError(null);
             const endpoint = isLogin ? "/login" : "/signup";
+
+            const payload = isLogin
+                ?{ username: values.username, password: values.password } 
+                : values;
             fetch(endpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(values),
+                body: JSON.stringify(payload),
             })
             .then((r) => {
-                if (r.ok) {
-                    return r.json();
-                } else {
-                    throw new Error("Authentication failed");
-                }
+                if (r.ok) return r.json();
+                throw new Error(isLogin ? "Invalid credentials" : "User already exists");
             })
             .then((user) => {
                 if (onLogin) onLogin(user);
@@ -43,7 +62,7 @@ function AuthPage({ onLogin}) {
             .catch((error) => setError(error.message));
         }
     });
-
+     
     return (
         <div className="auth-container">
             <div className="auth-card">
@@ -57,12 +76,28 @@ function AuthPage({ onLogin}) {
                     />
 
                     {formik.touched.username && formik.errors.username && <span className="error">{formik.errors.username}</span>}
-                    
+                    {error && <p className="error-text">{error}</p>}
+
                     {!isLogin && (
                         <>
                             <input
+                            name="first_name"
+                            placeholder="First Name"
+                            {...formik.getFieldProps("first_name")}
+                            />
+
+                            {formik.touched.first_name && formik.errors.first_name && <span className="error">{formik.errors.first_name}</span>}
+
+                            <input
+                            name="last_name"
+                            placeholder="Last Name"
+                            {...formik.getFieldProps("last_name")}
+                            />
+
+                            {formik.touched.last_name && formik.errors.last_name && <span className="error">{formik.errors.last_name}</span>}
+
+                            <input
                             name="email"
-                            type="email"
                             placeholder="email"
                             {...formik.getFieldProps("email")}
                             />
@@ -87,6 +122,7 @@ function AuthPage({ onLogin}) {
                   className="toggle-button"
                   onClick={() => {
                     setIsLogin(!isLogin);
+                    setError(null)
                   }}>{isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}</button>
             </div>
         </div>

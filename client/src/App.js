@@ -8,6 +8,7 @@ import BranchesPage from './pages/BranchesPage';
 import LoansPage from './pages/LoansPage';
 import UsersPage from './pages/UsersPage';
 import AuthPage from './components/Auth';
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,9 +20,12 @@ function App() {
         if (r.ok) {
           r.json().then((user) => setUser(user));
         }
-        setLoading(false);
-      });
-    }, []);
+        })
+    .catch(() => {
+      //ignore 401
+    })
+    .finally(() => setLoading(false));
+}, []);
 
     if(loading) return <div>Loading Apex Bank...</div>;
 
@@ -31,9 +35,9 @@ function App() {
         <Navbar user={user} onLogout={() => setUser(null)} />
         <main className="content">
           <Routes>
+            <Route path="/" element={<Dashboard user={user} />} />
             <Route path="/login" element={<AuthPage onLogin={setUser} />} />
             <Route path="/signup" element={<AuthPage onLogin={setUser} />} />
-            <Route path="/" element={<Dashboard user={user} />} />
             <Route path="/accounts" element={<ProtectedRoute user={user}><AccountsPage /></ProtectedRoute>} />
             <Route path="/transactions" element={<ProtectedRoute user={user}><TransactionsPage /></ProtectedRoute>} />
             <Route path="/branches" element={<ProtectedRoute user={user}><BranchesPage /></ProtectedRoute>} />

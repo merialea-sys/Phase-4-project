@@ -47,7 +47,7 @@ function BranchesPage() {
         })
         .then((r) => r.json())
         .then((newBranch) => {
-            setAccounts([...branches, newBranch]);
+            setBranches([...branches, newBranch]);
             resetForm();
         })
         .catch(() => setError("An error adding new branch."));
@@ -92,7 +92,7 @@ function BranchesPage() {
 
             <div className="branch-list">
                 {branches.map((branch) => (
-                    <div key={branch.id} className="account-card">
+                    <div key={branch.id} className="branch-card">
                         <h2>{branch.branch_name}</h2>
                         <p>Branch Code: {branch.branch_code}</p>
                         <p>Branch Address: {branch.address}</p>

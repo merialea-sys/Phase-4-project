@@ -46,7 +46,7 @@ function TransactionsPage() {
         })
         .then((r) => r.json())
         .then((newTransaction) => {
-            setAccounts([...transactions, newTransaction]);
+            setTransactions([...transactions, newTransaction]);
             resetForm();
         })
         .catch(() => setError("An error occurred while making the account."));
@@ -87,14 +87,12 @@ function TransactionsPage() {
                 </form>
             </section>
 
-            <div className="account-list">
-                {accounts.map((account) => (
-                    <div key={account.id} className="account-card">
-                        <h2>{account.name}</h2>
-                        <p>Account Number: {account.account_number}</p>
-                        <p>Type: {account.account_type}</p>
-                        <p>Balance: ${account.current_balance.toFixed(2)}</p>
-                        <p>Account Status: {account.status}</p>
+            <div className="transaction-list">
+                {transactions.map((transaction) => (
+                    <div key={transaction.id} className="transaction-card">
+                        <h2>{transaction.transaction_type}</h2>
+                        <p>Amount: {transaction.amount}</p>
+                        <p>Transaction Date: {transaction.transaction_date}</p>
                     </div>
                 ))}
             </div>

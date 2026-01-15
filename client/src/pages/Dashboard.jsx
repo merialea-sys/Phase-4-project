@@ -8,7 +8,7 @@ function Dashboard({ user }) {
         <div className="dashboard-page">
             <section className="hero-section">
                 <div className="hero-content">
-                    <img src="https://www.shutterstock.com/image-photo/stack-coins-calculator-house-lines-600nw-2672271823.jpg" alt="Hero Image"/>
+                    <img src="https://www.shutterstock.com/image-photo/stack-coins-calculator-house-lines-600nw-2672271823.jpg" alt="Hero logo"/>
                     <h1>Now's the time to plan your financial future,every choice could set them up for life</h1>
                     <button className="hero-button" onClick={() => navigate("/signup")}>LEARN MORE</button>
                 </div>
