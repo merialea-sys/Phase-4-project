@@ -60,3 +60,5 @@ with app.app_context():
         db.session.add(loan1)
         db.session.commit()
         print("✅ Added loans")
+
+    print("🌟 Database seeding complete!")
