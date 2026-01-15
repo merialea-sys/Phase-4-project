@@ -143,3 +143,24 @@ button {
 
 .hero-button:hover { background: var(--primary-blue); color: var(--white); transform: translateY(-3px); }
 
+.features-section {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+	gap: 1.5rem;
+	max-width: 1100px;
+	margin: -4rem auto 3rem auto;
+	padding: 0 1rem;
+}
+
+.feature-tile {
+	background: rgba(255,255,255,0.95);
+	backdrop-filter: blur(14px);
+	padding: 2rem 1rem;
+	border-radius: var(--border-radius);
+	box-shadow: var(--card-shadow);
+	text-align: center;
+	font-weight: 600;
+	transition: all 0.4s ease;
+	cursor: pointer;
+	position: relative;
+
