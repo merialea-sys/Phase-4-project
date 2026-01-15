@@ -1,21 +1,59 @@
+import React from "react";
 import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 
 function AccountsPage() {
   const [accounts, setAccounts] = useState([]);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchAccounts = () => {
     fetch ("/accounts")
-      .then((r) => setAccounts(r.data))
+      .then((r) => {
+        if (r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
+        return r.json();
+      })
+      .then ((data) => setAccounts(data))
       .catch((error) =>{
-        if (error.response && error.response.status === 401) {
-            setError("You must be logged in to view accounts.");
-        } else {
-            setError("An error occurred while fetching accounts.");
-        }
+        setError(error.message === "Unauthorized"
+            ? "You must be logged in to view accounts."
+            : "An error occurred while fetching accounts.");
       });
-  }, []);
+  };
+
+    useEffect(() => {
+       fetchAccounts();
+    }, []);
+
+    const formik = useFormik({
+        initialValues: {
+            account_number: "",
+            account_type: "",
+            current_balance: "0",
+            status: "",
+        },
+        validationSchema: Yup.object({
+            account_number: Yup.string().required("Account number is required"),
+            account_type: Yup.string().required("Account type is required"),
+    }),
+    onSubmit: (values, {resetForm}) => {
+        fetch("/accounts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+        })
+        .then((r) => r.json())
+        .then((newAccount) => {
+            setAccounts([...accounts, newAccount]);
+            resetForm();
+        })
+        .catch(() => setError("An error occurred while creating the account."));
+    },
+    });
+
 
     if (error) return <div className="error">{error}</div>;
 
@@ -24,6 +62,30 @@ function AccountsPage() {
             <header className="account-header">
                 <h1>Accounts</h1>
             </header>
+
+            <section className="account-form-section">
+                <form onSubmit={formik.handleSubmit} className="account-form">
+                    <input
+                    name="account_number"
+                    placeholder="Account Number"
+                    {...formik.getFieldProps("account_number")}
+                    />
+                    <select
+                    name="account_type"
+                    {...formik.getFieldProps("account_type")}
+                    >
+                        <option value="savings" label="Savings" />
+                        <option value="checking" label="Checking" />
+                    </select>
+                    <input
+                    name="current_balance"
+                    type="number"
+                    placeholder="Current Balance"
+                    {...formik.getFieldProps("current_balance")}
+                    />
+                    <button type="submit">Create Account</button>
+                </form>
+            </section>
 
             <div className="account-list">
                 {accounts.map((account) => (
