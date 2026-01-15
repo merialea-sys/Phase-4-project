@@ -92,7 +92,7 @@ function LoansPage() {
                         <option value="active" label="Active" />
                         <option value="paid off" label="Paid Off" />
                     </select>
-                    <button type="submit">Add Branch</button>
+                    <button type="submit">Take Loan</button>
                 </form>
             </section>
 
