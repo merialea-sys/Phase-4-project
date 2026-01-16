@@ -1,17 +1,12 @@
 from datetime import datetime
 
-from server.config import app, db
-from server.models import Branch, User, Account, UserAccount, Transaction, Loan
+from config import app, db
+from models import Branch, User, Account, UserAccount, Transaction, Loan
 
 
 def seed_data():
     with app.app_context():
-        # ---------------------------
-        # CREATE TABLES
-        # ---------------------------
-        db.create_all()
-        print("Tables ensured")
-
+        
         # ---------------------------
         # BRANCHES
         # ---------------------------

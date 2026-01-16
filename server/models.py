@@ -19,7 +19,7 @@ class UserAccount(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='user_accounts')
     account = db.relationship('Account', back_populates='user_accounts')
 
-    serialize_rules = ('-user.user_accounts', '-account.user_accounts',)
+    serialize_rules = ('-user.user_accounts', '-account.user_accounts', '-user.loans', '-account.transactions', '-account.branch')
 
 
 class User(db.Model, SerializerMixin):
@@ -38,7 +38,7 @@ class User(db.Model, SerializerMixin):
     user_accounts = db.relationship('UserAccount', back_populates='user', cascade='all, delete-orphan')
     loans = db.relationship('Loan', back_populates='user', cascade='all, delete-orphan')
 
-    serialize_rules = ('-_password_hash', '-user_accounts.user', '-loans.user')
+    serialize_rules = ('-_password_hash', '-user_accounts.user', '-loans.user', '-user_accounts.account.user_accounts')
 
     # Password helpers
     @property
@@ -56,6 +56,7 @@ class User(db.Model, SerializerMixin):
 class Branch(db.Model, SerializerMixin):
     __tablename__ = 'branches'
 
+
     id = db.Column(db.Integer, primary_key=True)
     branch_name = db.Column(db.String, nullable=False)
     branch_code = db.Column(db.String, nullable=False, unique=True)
@@ -65,11 +66,12 @@ class Branch(db.Model, SerializerMixin):
     accounts = db.relationship('Account', back_populates='branch', cascade='all, delete-orphan')
     loans = db.relationship('Loan', back_populates='branch', cascade='all, delete-orphan')
 
-    serialize_rules = ('-accounts.branch', '-loans.branch')
+    serialize_rules = ('-accounts.branch', '-loans.branch', '-accounts.user_accounts')
 
 
 class Account(db.Model, SerializerMixin):
     __tablename__ = 'accounts'
+
 
     id = db.Column(db.Integer, primary_key=True)
     account_number = db.Column(db.Integer, unique=True, nullable=False)
@@ -83,7 +85,11 @@ class Account(db.Model, SerializerMixin):
     user_accounts = db.relationship('UserAccount', back_populates='account', cascade='all, delete-orphan')
     branch = db.relationship('Branch', back_populates='accounts')
 
-    serialize_rules = ('-transactions.account', '-user_accounts.account', '-branch.accounts')
+    serialize_rules = ('-branch.accounts',
+                        '-transactions.account',
+                        '-user_accounts.account',
+                        '-user_accounts.user.user_accounts'
+                    )
 
 
 class Transaction(db.Model, SerializerMixin):
