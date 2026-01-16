@@ -22,4 +22,4 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
 
-CORS(app)
+CORS(app, supports_credentials=True)

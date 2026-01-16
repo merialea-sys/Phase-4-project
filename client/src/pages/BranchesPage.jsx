@@ -10,7 +10,10 @@ function BranchesPage() {
 
   const fetchBranches = () => {
     fetch ("/branches")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
+        return r.json();
+      })
       .then ((data) => setBranches(data))
       .catch((error) =>{
         setError(error.message === "Unauthorized"

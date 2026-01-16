@@ -10,7 +10,10 @@ function TransactionsPage() {
 
   const fetchTransactions = () => {
     fetch ("/transactions")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
+        return r.json();
+      })
       .then ((data) => setTransactions(data))
       .catch((error) =>{
         setError(error.message === "Unauthorized"

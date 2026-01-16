@@ -64,7 +64,8 @@ function UsersPage() {
         <div className="profile-container">
             <header className="profile-header">
                 <div className="avatar-large">
-                    {userData.username[0].toUpperCase()}
+                    {userData?.username ? userData.username[0].toUpperCase() : "?"}
+
                 </div>
                 <h1>{userData.username}'s Profile</h1>
                 <span className="role-badge">

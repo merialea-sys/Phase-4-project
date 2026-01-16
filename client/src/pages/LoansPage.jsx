@@ -10,7 +10,10 @@ function LoansPage() {
 
   const fetchLoans = () => {
     fetch ("/loans")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
+        return r.json();
+      })
       .then ((data) => setLoans(data))
       .catch((error) =>{
         setError(error.message === "Unauthorized"
