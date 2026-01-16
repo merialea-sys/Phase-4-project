@@ -49,7 +49,7 @@ def handle_500(e):
 
 class Signup(Resource):
     def post(self):
-        data = request.get_json() or {}
+        data = request.get_json(force=True) or {}
 
         required = ['username', 'email', 'password']
         if not all(field in data for field in required):
@@ -58,20 +58,26 @@ class Signup(Resource):
         if User.query.filter((User.username == data['username']) | (User.email == data['email'])).first():
             return {"error": "User with that username or email already exists"}, 400
 
-        new_user = User(
+        try:
+
+            new_user = User(
             username=data['username'],
             email=data['email'],
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
-        )
-        new_user.password_hash = data['password']
+            )
+            new_user.password_hash = data['password']
 
-        db.session.add(new_user)
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
 
-        session['user_id'] = new_user.id
+            session['user_id'] = new_user.id
 
-        return new_user.to_dict(), 201
+            return new_user.to_dict(), 201
+        
+        except Exception as e:
+            db.session.rollback()
+            return {"error": str(e)}, 422
 
 
 class Login(Resource):
