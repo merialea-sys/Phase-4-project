@@ -10,7 +10,7 @@ def seed_data():
         # CREATE TABLES
         # ---------------------------
         db.create_all()
-        print("✅ Tables ensured")
+        print("Tables ensured")
 
         # ---------------------------
         # BRANCHES
@@ -30,7 +30,7 @@ def seed_data():
             )
             db.session.add_all([branch1, branch2])
             db.session.commit()
-            print("✅ Added branches")
+            print("Added branches")
 
         # ---------------------------
         # ADMIN USER
@@ -46,7 +46,7 @@ def seed_data():
             admin.password_hash = "admin123"
             db.session.add(admin)
             db.session.commit()
-            print("✅ Added admin user")
+            print(" Added admin user")
 
         # ---------------------------
         # NORMAL USERS
@@ -70,7 +70,7 @@ def seed_data():
 
             db.session.add_all([user1, user2])
             db.session.commit()
-            print("✅ Added normal users")
+            print("Added normal users")
 
         # ---------------------------
         # ACCOUNTS & USER ACCOUNTS
@@ -109,7 +109,7 @@ def seed_data():
 
             db.session.add_all([ua1, ua2])
             db.session.commit()
-            print("✅ Added accounts and linked users")
+            print("Added accounts and linked users")
 
         # ---------------------------
         # TRANSACTIONS
@@ -131,7 +131,7 @@ def seed_data():
 
             db.session.add_all([tx1, tx2])
             db.session.commit()
-            print("✅ Added transactions")
+            print("Added transactions")
 
         # ---------------------------
         # LOANS
@@ -149,9 +149,9 @@ def seed_data():
 
             db.session.add(loan1)
             db.session.commit()
-            print("✅ Added loans")
+            print("Added loans")
 
-        print("🌟 Database seeding complete!")
+        print("Database seeding complete!")
 
 
 if __name__ == "__main__":
