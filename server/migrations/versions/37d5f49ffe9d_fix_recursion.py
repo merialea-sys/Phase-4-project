@@ -1,8 +1,8 @@
-"""empty message
+"""fix recursion
 
-Revision ID: 43c6632847fc
+Revision ID: 37d5f49ffe9d
 Revises: 
-Create Date: 2026-01-14 19:10:09.062773
+Create Date: 2026-01-16 11:14:31.564974
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '43c6632847fc'
+revision = '37d5f49ffe9d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,6 +35,7 @@ def upgrade():
     sa.Column('first_name', sa.String(), nullable=True),
     sa.Column('last_name', sa.String(), nullable=True),
     sa.Column('date_of_birth', sa.DateTime(), nullable=True),
+    sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')

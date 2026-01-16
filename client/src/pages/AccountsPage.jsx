@@ -11,7 +11,7 @@ function AccountsPage() {
   const fetchAccounts = () => {
     fetch ("/accounts")
       .then((r) => {
-        if (r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
+        if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
       })
       .then ((data) => setAccounts(data))
@@ -30,11 +30,11 @@ function AccountsPage() {
         initialValues: {
             account_number: "",
             account_type: "",
-            current_balance: "0",
+            current_balance: "",
             status: "",
         },
         validationSchema: Yup.object({
-            account_number: Yup.string().required("Account number is required"),
+            account_number: Yup.number().required("Account number is required"),
             account_type: Yup.string().required("Account type is required"),
     }),
     onSubmit: (values, {resetForm}) => {
@@ -79,11 +79,11 @@ function AccountsPage() {
                     </select>
                     <input
                     name="current_balance"
-                    type="number"
+                    
                     placeholder="Current Balance"
                     {...formik.getFieldProps("current_balance")}
                     />
-                    <button type="submit">Create Account</button>
+                    <button type="submit" disabled={formik.isSubmitting}>{formik.isSubmitting ? "Creating..." : "Create Account"}</button>
                 </form>
             </section>
 

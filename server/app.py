@@ -96,7 +96,7 @@ class CheckSession(Resource):
         if not user_id:
             return {"error": "Not logged in"}, 401
 
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             return {"error": "User not found"}, 404
 
@@ -114,7 +114,7 @@ class Logout(Resource):
 
 class Users(Resource):
     def get(self):
-        users = User.query.all()
+        users = db.session.get(User, id)
         return [u.to_dict() for u in users], 200
 
     def post(self):
@@ -140,14 +140,14 @@ class UserById(Resource):
         if not session.get("user_id"):
             return {"error": "Unauthorized"}, 401
 
-        user = User.query.get(id)
+        user = db.session.get(User, id)
         if not user:
             return {"error": "User not found"}, 404
-        return user.to_dict(), 200
+        return user.to_dict(max_depth=2), 200
 
 
     def patch(self, id):
-        user = User.query.get(id)
+        user = db.session.get(User, id)
         if not user:
             return {"error": "User not found"}, 404
 
@@ -167,7 +167,7 @@ class UserById(Resource):
             return {"error": str(e)}, 400
 
     def delete(self, id):
-        user = User.query.get(id)
+        user = db.session.get(User, id)
         if not user:
             return {"error": "User not found"}, 404
 
@@ -186,7 +186,7 @@ class Accounts(Resource):
             return {"error": "Unauthorized"}, 401
 
         accounts = Account.query.all()
-        return [a.to_dict() for a in accounts], 200
+        return [a.to_dict(rules=('-user_accounts.user.user_accounts', '-user_accounts.account')) for a in accounts], 200
 
     @admin_required
     def post(self):
@@ -212,11 +212,11 @@ class AccountById(Resource):
     
     @login_required
     def get(self, id):
-        user_id = session.get("user_id")
+        user_id = db.session.get("user_id")
         if not user_id:
             return {"error": "Unauthorized"}, 401
 
-        account = Account.query.get(id)
+        account = db.session.get(Account, id)
         if not account:
             return {"error": "Account not found"}, 404
 
@@ -224,12 +224,12 @@ class AccountById(Resource):
         if not require_role(user_id, id, ["owner", "admin"]):
             return {"error": "Forbidden"}, 403
 
-        return account.to_dict(), 200
+        return account.to_dict(max_depth=2), 200
 
 
     @owner_required
     def patch(self, id):
-        account = Account.query.get(id)
+        account = db.session.get(Account, id)
         if not account:
             return {"error": "Account not found"}, 404
 
@@ -249,14 +249,14 @@ class AccountById(Resource):
             return {"error": str(e)}, 400
     @admin_required
     def delete(self, id):
-        user_id = session.get("user_id")
+        user_id = db.session.get("user_id")
         if not user_id:
             return {"error": "Unauthorized"}, 401
 
         if not require_role(user_id, id, ["admin"]):
             return {"error": "Forbidden"}, 403
 
-        account = Account.query.get(id)
+        account = db.session.get(Account, id)
         if not account:
             return {"error": "Account not found"}, 404
 
@@ -314,7 +314,7 @@ class TransactionById(Resource):
         user_id = session.get("user_id")
 
         # Admins can view all
-        user = User.query.get(user_id)
+        user = db.session.get(User, id)
         if user.is_admin:
             return tx.to_dict(), 200
 
@@ -330,7 +330,7 @@ class TransactionById(Resource):
         return tx.to_dict(), 200
     @owner_required
     def delete(self, id):
-        tx = Transaction.query.get(id)
+        tx = db.session.get(Transaction, id)
         if not tx:
             return {"error": "Transaction not found"}, 404
 
@@ -366,13 +366,13 @@ class Branches(Resource):
 
 class BranchById(Resource):
     def get(self, id):
-        branch = Branch.query.get(id)
+        branch = db.session.get(Branch, id)
         if not branch:
             return {"error": "Branch not found"}, 404
         return branch.to_dict(), 200
 
     def patch(self, id):
-        branch = Branch.query.get(id)
+        branch = db.session.get(Branch, id)
         if not branch:
             return {"error": "Branch not found"}, 404
 
@@ -389,7 +389,7 @@ class BranchById(Resource):
             return {"error": str(e)}, 400
 
     def delete(self, id):
-        branch = Branch.query.get(id)
+        branch = db.session.get(Branch, id)
         if not branch:
             return {"error": "Branch not found"}, 404
 
@@ -405,8 +405,8 @@ class Loans(Resource):
     @login_required
     def get(self):
         user_id = session.get("user_id")
-        user = User.query.get(user_id)
-
+        if user_id:
+            user = db.session.get(User, user_id)
         if user.is_admin:
             loans = Loan.query.all()
         else:
@@ -439,7 +439,7 @@ class Loans(Resource):
 class LoanById(Resource):
     @login_required
     def get(self, id):
-        loan = Loan.query.get(id)
+        loan = db.session.get(Loan, id)
         if not loan:
             return {"error": "Loan not found"}, 404
 
@@ -452,7 +452,7 @@ class LoanById(Resource):
         return {"error": "Forbidden"}, 403
     @owner_required
     def patch(self, id):
-        loan = Loan.query.get(id)
+        loan = db.session.get(Loan, id)
         if not loan:
             return {"error": "Loan not found"}, 404
 
@@ -474,7 +474,7 @@ class LoanById(Resource):
     
     @admin_required
     def delete(self, id):
-        loan = Loan.query.get(id)
+        loan = db.session.get(Loan, id)
         if not loan:
             return {"error": "Loan not found"}, 404
 
@@ -513,7 +513,7 @@ class UserAccounts(Resource):
 class ApproveLoan(Resource):
     @admin_required
     def patch(self, id):
-        loan = Loan.query.get(id)
+        loan = db.session.get(Loan, id)
         if not loan:
             return {"error": "Loan not found"}, 404
 
