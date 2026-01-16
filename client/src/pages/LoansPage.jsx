@@ -98,7 +98,7 @@ function LoansPage() {
 
             <div className="loan-list">
                 {loans.map((loan) => (
-                    <div key={loan.id} className="account-card">
+                    <div key={loan.id} className="loan-card">
                         <h2>{loan.loan_type}</h2>
                         <p>Loan Amount: {loan.loan_amount}</p>
                         <p>Start Date: {loan.start_date}</p>
