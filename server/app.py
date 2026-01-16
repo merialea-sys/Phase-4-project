@@ -198,12 +198,15 @@ class Accounts(Resource):
     def post(self):
         data = request.get_json() or {}
         try:
+            if 'account_number' not in data or 'branch_id' not in data:
+                return {"error": "Missing account_number or branch_id"}, 400
+        
             account = Account(
-                account_number=data['account_number'],
+                account_number=int(data['account_number']),
                 account_type=data['account_type'],
-                current_balance=data.get('current_balance', 0),
+                current_balance=int(data.get('current_balance', 0)),
                 status=data.get('status', 'active'),
-                user_id=data.get('user_id'),
+                user_id=data.get('user_id') or session.get('user_id'),
                 branch_id=data['branch_id'],
             )
             db.session.add(account)
@@ -296,13 +299,13 @@ class Transactions(Resource):
 
     @owner_required
     def post(self):
-        data = request.get_json() or {}
+        data = request.get_json(force=True) or {}
 
         tx = Transaction(
-            amount=data['amount'],
+            amount=int(data['amount']),
             transaction_type=data['transaction_type'],
             transaction_date=data.get('transaction_date'),
-            account_id=data['account_id'],
+            account_id=int(data['account_id']),
         )
         db.session.add(tx)
         db.session.commit()
@@ -423,17 +426,28 @@ class Loans(Resource):
 
 
     def post(self):
-        data = request.get_json() or {}
+        data = request.get_json(force=True) or {}
+
+        required = ['loan_type', 'loan_amount']
+        if not all(k in data for k in required):
+            return {"error": "Missing loan_type or loan_amount"}, 400
+
+        user_id = data.get('user_id') or session.get('user_id')
+        branch_id = data.get('branch_id') or 1
         try:
             loan = Loan(
                 loan_type=data['loan_type'],
-                loan_amount=data['loan_amount'],
-                start_date=data.get('start_date'),
-                end_date=data.get('end_date'),
-                status=data.get('status', 'pending'),
-                branch_id=data['branch_id'],
-                user_id=data['user_id'],
+                loan_amount=int(data['loan_amount']),
+                status=data.get('loan_status', 'pending'),
+                branch_id=branch_id,
+                user_id=user_id,
             )
+
+            if data.get('start_date'):
+                loan.start_date = data.get('start_date')
+            if data.get('end_date'):
+                loan.end_date = data.get('end_date')
+            
             db.session.add(loan)
             db.session.commit()
             return loan.to_dict(), 201
@@ -450,7 +464,7 @@ class LoanById(Resource):
             return {"error": "Loan not found"}, 404
 
         user_id = session.get("user_id")
-        user = User.query.get(user_id)
+        user =db.session.get(User, user_id)
 
         if user.is_admin or loan.user_id == user_id:
             return loan.to_dict(), 200
