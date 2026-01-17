@@ -8,15 +8,17 @@ function UsersPage() {
   const [userData, setUserData] = useState([]);
   const [message, setMessage] = useState({ type: "", text: ""});
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
  useEffect(() => {
-        fetch("/check_session")
+        fetch(`${API_BASE_URL}/check_session`)
             .then((r) => {
                 if (r.ok) return r.json();
                 throw new Error("Failed to load profile");
             })
             .then((data) => setUserData(data))
             .catch((err) => setMessage({ type: "error", text: err.message }));
-    }, []);
+    }, [API_BASE_URL]);
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -38,7 +40,7 @@ function UsersPage() {
             last_name: Yup.string().required("Last Name is required")
     }),
     onSubmit: (values) => {
-        fetch("/users/{userData.id}", {
+        fetch(`${API_BASE_URL}/users/{userData.id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
