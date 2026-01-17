@@ -93,7 +93,7 @@ def handle_500(e):
 # -------------------------
 
 class Index(Resource):
-    def home():
+    def get(self):
         return {"message" : "Apex bank Api is running", "status": "ok"}, 200
 
 class Signup(Resource):
