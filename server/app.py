@@ -1,6 +1,6 @@
 # server/app.py
 
-
+import os
 from auth import login_required, admin_required, owner_required
 from flask import request, session
 
@@ -584,7 +584,8 @@ api.add_resource(ApproveLoan, "/loans/<int:id>/approve")
 # -------------------------
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
 
 
