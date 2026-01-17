@@ -8,8 +8,12 @@ function BranchesPage() {
   const [branches, setBranches] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchBranches = () => {
-    fetch ("/branches")
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
+  
+    useEffect(() => {
+       const fetchBranches = () => {
+    fetch (`${API_BASE_URL}/branches`)
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
@@ -21,10 +25,8 @@ function BranchesPage() {
             : "An error occurred while fetching branches.");
       });
   };
-
-    useEffect(() => {
-       fetchBranches();
-    }, []);
+    fetchBranches();
+    }, [API_BASE_URL]);
 
     const formik = useFormik({
         initialValues: {
@@ -38,7 +40,7 @@ function BranchesPage() {
             branch_code: Yup.string().required("Branch code is required"),
     }),
     onSubmit: (values, {resetForm}) => {
-        fetch("/branches", {
+        fetch(`${API_BASE_URL}/branches`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -11,6 +11,8 @@ function AuthPage({ onLogin}) {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
     useEffect(() => {
     setIsLogin(location.pathname === "/login");
   }, [location.pathname]);
@@ -44,7 +46,7 @@ function AuthPage({ onLogin}) {
             const payload = isLogin
                 ?{ username: values.username, password: values.password } 
                 : values;
-            fetch(endpoint, {
+            fetch(`${API_BASE_URL}${endpoint}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

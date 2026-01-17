@@ -8,8 +8,12 @@ function LoansPage() {
   const [loans, setLoans] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchLoans = () => {
-    fetch ("/loans")
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
+ 
+    useEffect(() => {
+       const fetchLoans = () => {
+    fetch (`${API_BASE_URL}/loans`)
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
@@ -21,10 +25,8 @@ function LoansPage() {
             : "An error occurred while fetching loans.");
       });
   };
-
-    useEffect(() => {
-       fetchLoans();
-    }, []);
+    fetchLoans();
+    }, [API_BASE_URL]);
 
     const formik = useFormik({
         initialValues: {
@@ -38,7 +40,7 @@ function LoansPage() {
             loan_type: Yup.string().required("Loan type is required")
     }),
     onSubmit: (values, {resetForm}) => {
-        fetch("/loans", {
+        fetch(`${API_BASE_URL}/loans`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

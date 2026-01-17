@@ -8,8 +8,13 @@ function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchTransactions = () => {
-    fetch ("/transactions")
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
+  
+
+    useEffect(() => {
+       const fetchTransactions = () => {
+    fetch (`${API_BASE_URL}/transactions`)
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
@@ -21,10 +26,8 @@ function TransactionsPage() {
             : "An error occurred while making transaction.");
       });
   };
-
-    useEffect(() => {
-       fetchTransactions();
-    }, []);
+    fetchTransactions();
+    }, [API_BASE_URL]);
 
     const formik = useFormik({
         initialValues: {
@@ -37,7 +40,7 @@ function TransactionsPage() {
             transaction_type: Yup.string().required("Transaction type is required"),
     }),
     onSubmit: (values, {resetForm}) => {
-        fetch("/transactions", {
+        fetch(`${API_BASE_URL}/transactions`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

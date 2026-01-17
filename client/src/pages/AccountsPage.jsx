@@ -7,9 +7,13 @@ import * as Yup from "yup";
 function AccountsPage() {
   const [accounts, setAccounts] = useState([]);
   const [error, setError] = useState(null);
+  
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
 
-  const fetchAccounts = () => {
-    fetch ("/accounts")
+
+    useEffect(() => {
+       const fetchAccounts = () => {
+    fetch (`${API_BASE_URL}/accounts`)
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
@@ -21,10 +25,8 @@ function AccountsPage() {
             : "An error occurred while fetching accounts.");
       });
   };
-
-    useEffect(() => {
-       fetchAccounts();
-    }, []);
+    fetchAccounts();
+    }, [API_BASE_URL]);
 
     const formik = useFormik({
         initialValues: {
@@ -38,7 +40,7 @@ function AccountsPage() {
             account_type: Yup.string().required("Account type is required"),
     }),
     onSubmit: (values, {resetForm}) => {
-        fetch("/accounts", {
+        fetch(`${API_BASE_URL}/accounts`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
