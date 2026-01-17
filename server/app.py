@@ -1,7 +1,7 @@
 # server/app.py
 
 import os
-from auth import login_required, admin_required, owner_required
+import auth
 from flask import request, session
 
 from flask_restful import Resource
