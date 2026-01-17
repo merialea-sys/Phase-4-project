@@ -92,6 +92,10 @@ def handle_500(e):
 # Auth resources
 # -------------------------
 
+class Index(Resource):
+    def home():
+        return {"message" : "Apex bank Api is running", "status": "ok"}, 200
+
 class Signup(Resource):
     def post(self):
         data = request.get_json(force=True) or {}
@@ -597,6 +601,8 @@ class ApproveLoan(Resource):
 # -------------------------
 # Route registration
 # -------------------------
+
+api.add_resource(index, '/')
 
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
