@@ -602,7 +602,7 @@ class ApproveLoan(Resource):
 # Route registration
 # -------------------------
 
-api.add_resource(index, '/')
+api.add_resource(Index, '/')
 
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
