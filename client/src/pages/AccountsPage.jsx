@@ -13,7 +13,7 @@ function AccountsPage() {
 
     useEffect(() => {
        const fetchAccounts = () => {
-    fetch (`${API_BASE_URL}/accounts`)
+    fetch (`${API_BASE_URL}/accounts`, {credentials: "include"})
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();

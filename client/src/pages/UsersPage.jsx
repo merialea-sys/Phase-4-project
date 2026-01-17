@@ -11,7 +11,7 @@ function UsersPage() {
   const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
 
  useEffect(() => {
-        fetch(`${API_BASE_URL}/check_session`)
+        fetch(`${API_BASE_URL}/check_session`, {credentials: "include"})
             .then((r) => {
                 if (r.ok) return r.json();
                 throw new Error("Failed to load profile");
@@ -40,11 +40,12 @@ function UsersPage() {
             last_name: Yup.string().required("Last Name is required")
     }),
     onSubmit: (values) => {
-        fetch(`${API_BASE_URL}/users/{userData.id}`, {
+        fetch(`${API_BASE_URL}/users/${userData.id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify(values),
         })
          .then((r) => {
