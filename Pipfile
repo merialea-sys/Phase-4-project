@@ -11,6 +11,7 @@ flask-restful = "*"
 sqlalchemy-serializer = "*"
 flask-cors = "*"
 python-dotenv = "*"
+honcho = "*"
 
 [dev-packages]
 
