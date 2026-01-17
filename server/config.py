@@ -9,17 +9,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-application = Flask(__name__)
+app = Flask(__name__)
 
-application.secret_key = os.environ.get('SECRET_KEY') or 'dev-key-for-local-testing-only'
-application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///banking_app.db'
-application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.environ.get('SECRET_KEY') or 'dev-key-for-local-testing-only'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///banking_app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-application.config['SESSION_COOKIE_HTTPONLY'] = True
-application.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False
 
-db = SQLAlchemy(application)
-migrate = Migrate(application, db)
-api = Api(application)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+api = Api(app)
 
-CORS(application, supports_credentials=True)
+CORS(app, supports_credentials=True)

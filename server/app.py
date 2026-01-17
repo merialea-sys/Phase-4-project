@@ -3,12 +3,12 @@
 import os
 from functools import wraps
 from flask import session
-from models import User, UserAccount
+
 from flask import request, session
 
 from flask_restful import Resource
 
-from config import application, db, api
+from config import app, db, api
 from models import User, Account, Transaction, Branch, Loan, UserAccount
 
 def login_required(fn):
@@ -56,7 +56,7 @@ def owner_required(fn):
     return wrapper
 
 # OPTIONAL
-application.secret_key = "change-me-in-production"
+app.secret_key = "change-me-in-production"
 
 def require_role(user_id, account_id, allowed_roles):
     link = UserAccount.query.filter_by(
@@ -74,17 +74,17 @@ def require_role(user_id, account_id, allowed_roles):
 # Error handlers
 # -------------------------
 
-@application.errorhandler(404)
+@app.errorhandler(404)
 def handle_404(e):
     return {"error": "Resource not found"}, 404
 
 
-@application.errorhandler(400)
+@app.errorhandler(400)
 def handle_400(e):
     return {"error": "Bad request"}, 400
 
 
-@application.errorhandler(500)
+@app.errorhandler(500)
 def handle_500(e):
     return {"error": "Internal server error"}, 500
 
@@ -630,7 +630,7 @@ api.add_resource(ApproveLoan, "/loans/<int:id>/approve")
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    application.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port)
 
 
 

@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from config import application, db
+from config import app, db
 from models import Branch, User, Account, UserAccount, Transaction, Loan
 
 
 def seed_data():
-    with application.app_context():
+    with app.app_context():
         
         # ---------------------------
         # BRANCHES
