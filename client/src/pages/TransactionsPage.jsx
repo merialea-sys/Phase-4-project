@@ -14,7 +14,7 @@ function TransactionsPage() {
 
     useEffect(() => {
        const fetchTransactions = () => {
-    fetch (`${API_BASE_URL}/transactions`)
+    fetch (`${API_BASE_URL}/transactions`, {credentials: "include"})
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();

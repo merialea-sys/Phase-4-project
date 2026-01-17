@@ -13,7 +13,7 @@ function BranchesPage() {
   
     useEffect(() => {
        const fetchBranches = () => {
-    fetch (`${API_BASE_URL}/branches`)
+    fetch (`${API_BASE_URL}/branches`, {credentials: "include"})
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();

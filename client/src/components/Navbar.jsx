@@ -4,9 +4,12 @@ import { NavLink, useNavigate} from "react-router-dom";
 function Navbar({ user, onLogout }) {
     const navigate = useNavigate();
 
+    const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
     const handleLogout = () => {
-        fetch("/logout", {
+        fetch(`${API_BASE_URL}/logout`, {
             method: "DELETE",
+            credentials: "include"
         })
         .then((r) => {
             if (r.ok) {

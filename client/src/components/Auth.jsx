@@ -51,6 +51,7 @@ function AuthPage({ onLogin}) {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(payload),
             })
             .then((r) => {

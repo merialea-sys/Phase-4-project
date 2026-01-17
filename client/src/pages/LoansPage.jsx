@@ -13,7 +13,7 @@ function LoansPage() {
  
     useEffect(() => {
        const fetchLoans = () => {
-    fetch (`${API_BASE_URL}/loans`)
+    fetch (`${API_BASE_URL}/loans`, {credentials: "include"})
       .then((r) => {
         if (!r.ok) throw new Error(r.status === 401 ? "Unauthorized" : "Error");
         return r.json();
