@@ -14,8 +14,12 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+   const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5555";
+
   useEffect(() => {
-    fetch("/check_session")
+    fetch(`${API_BASE_URL}/check_session`, {
+      credentials: "include"
+    })
       .then((r) => {
         if (r.ok) {
           r.json().then((user) => setUser(user));
@@ -25,7 +29,7 @@ function App() {
       //ignore 401
     })
     .finally(() => setLoading(false));
-}, []);
+}, [API_BASE_URL]);
 
     if(loading) return <div>Loading Apex Bank...</div>;
 
